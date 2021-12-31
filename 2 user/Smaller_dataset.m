@@ -14,10 +14,10 @@ avgpathgain_eva=[0.0 -1.5 -1.4 -3.6 -0.6 -9.1 -7.0 -12.0 -16.9];
 % Pr1: -78.2344 at distance:750 meters
 %loss=[-30.4700877872899,-44.8189408627481,-45.5570879836464,-46.1371328886116,-47.1048365575309,-47.6122802822269,-48.2343944786525];
 %[-60.4700877872899,-74.8189408627481,-75.5570879836464,-76.1371328886116,-77.1048365575309,-77.6122802822269,-78.2343944786525]
-loss(1)=-74.8189408627481;
-loss(2)= -60.4700877872899; 
-main='100&500w_shuffle';
-part='100';
+loss(1)= -78.2343944786525; %
+loss(2)= -60.4700877872899; %Pr for 100m
+main='100&750w';
+part='750';
 for i=1:2
 avgpathgain_eva_ls=avgpathgain_eva-loss(i);
 rayChan{i} = comm.RayleighChannel('SampleRate',fs,...
@@ -57,30 +57,30 @@ end
  A=alpha(i1,:);
  disp(A)
 %  
-tx1=zeros(150000,1024);
-labels=zeros(150000,5);
+tx1=zeros(50000,1024);
+labels=zeros(50000,5);
 mod_comb=[3 4;4 1;3 2;4 2;1 2];
-a1=zeros(150000,1);
+a1=zeros(50000,1);
 a2=zeros(5,1);
 count1=0;
 done=0;
 h=1;
 
-for i=1:150000
- a1(i)=fix((i-1)/30000)+1;
+for i=1:50000
+ a1(i)=fix((i-1)/10000)+1;
 end
-for i=1:150000
-    if(rem(i,30000)==0)
+for i=1:50000
+    if(rem(i,10000)==0)
         disp("label_gen "+i)
     end
  labels(i,a1(i))=1;
 end
 % 
 rayChan_data= comm.RayleighChannel('SampleRate',fs,...
-            'PathDelays',0,...
-            'AveragePathGains',loss(2),...
-            'PathGainsOutputPort',true);
-for i=1:150000
+    'PathDelays',0,...
+    'AveragePathGains',loss(1),...
+    'PathGainsOutputPort',true);
+parfor i=1:50000
     if(rem(i,25)==0)
         disp(i)
     end
@@ -89,13 +89,6 @@ for i=1:150000
     b=0;
     
     tx_raw=0;
-    if(rem(i,1000)==0)
-        rng shuffle
-        rayChan_data= comm.RayleighChannel('SampleRate',fs,...
-            'PathDelays',0,...
-            'AveragePathGains',loss(2),...
-            'PathGainsOutputPort',true);
-    end
     for u=1:2
         [tx_mod,m]=modulation(mod_comb(a1(i),u));
       
@@ -109,9 +102,9 @@ for i=1:150000
    
 end
 
-real1=zeros(150000,1024);
-imag1=zeros(150000,1024);
-for i =1:150000
+real1=zeros(50000,1024);
+imag1=zeros(50000,1024);
+for i =1:50000
     real1(i,:) = real(tx1(i,:));
     imag1(i,:) = imag(tx1(i,:));
     if(rem(i,25)==0)
@@ -122,15 +115,15 @@ end
 
 writeNPY(real1, 'noma_order_real_vh.npy');
 writeNPY(imag1, 'noma_order_imag_vh.npy');
-writeNPY(labels,['2user-' main '-' part 'm_labels_150K_5.npy']);
+writeNPY(labels,['2user-' main '-' part 'm_labels_50K_5.npy']);
 clear all;
-main='100&500w_shuffle';
-part='100';
+main='100&750w';
+part='750';
 real=readNPY('noma_order_real_vh.npy');
 imag=readNPY('noma_order_imag_vh.npy');
-dataset=zeros(150000,1024,2);
+dataset=zeros(50000,1024,2);
 
-for i=1:150000
+for i=1:50000
    if(rem(i,1000)==0)
     disp(i);
    end
@@ -139,37 +132,37 @@ for i=1:150000
           dataset(i,j,2)=imag(i,j);
    end
 end
-writeNPY(dataset,['2user-' main '-' part 'm_150k_1024_2.npy']);
+writeNPY(dataset,['2user-' main '-' part 'm_50k_1024_2.npy']);
 
-% clear all;
-% main='100&500w_shuffle';
-% part='100';
-% disp("creating second dataset");
-% data1=readNPY(['2user-' main '-' part 'm_150k_1024_2.npy']);
-% dataset=zeros(150000,2,1024);
-% for i=1:150000
-%    if(rem(i,1000)==0)
-%     disp(i);
-%    end
-%     for j=1:1024
-%           dataset(i,1,j)=data1(i,j,1);
-%           dataset(i,2,j)=data1(i,j,2);
-%    end
-% end
-% writeNPY(dataset,['2user-' main '-' part 'm_150k_2_1024.npy']);
-% clear all;
-main='100&500w_shuffle';
-part='100';
+clear all;
+main='100&750w';
+part='750';
+disp("creating second dataset");
+data1=readNPY(['2user-' main '-' part 'm_50k_1024_2.npy']);
+dataset=zeros(50000,2,1024);
+for i=1:50000
+   if(rem(i,1000)==0)
+    disp(i);
+   end
+    for j=1:1024
+          dataset(i,1,j)=data1(i,j,1);
+          dataset(i,2,j)=data1(i,j,2);
+   end
+end
+writeNPY(dataset,['2user-' main '-' part 'm_50k_2_1024.npy']);
+clear all;
+main='100&750w';
+part='750';
 disp("labels creation");
-label=readNPY(['2user-' main '-' part 'm_labels_150K_5.npy']);
-l=zeros(150000,1);
-for i=1:150000
+label=readNPY(['2user-' main '-' part 'm_labels_50K_5.npy']);
+l=zeros(50000,1);
+for i=1:50000
     for j=1:5
         if(label(i,j)==1)
             l(i)=j-1;
         end
     end
 end
-writeNPY(l,['2user-' main '-' part 'm_labels_150k_1.npy']);
+writeNPY(l,['2user-' main '-' part 'm_labels_50k_1.npy']);
 
 
