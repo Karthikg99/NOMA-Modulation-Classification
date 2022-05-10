@@ -12,9 +12,9 @@ TXAntennaGain=1; %db
 RXAntennaGain=1; %db
 PTx=100; % i.e. 100 watt assumptation
 PathLossExponent=2.7; %Urban cellular radio
-PTxdBm=10*log10(PTx);
+PTxdBw=10*log10(PTx);
 Wavelength=LightSpeedC/Freq;
-Pr0=PTxdBm + TXAntennaGain + RXAntennaGain- (10*PathLossExponent*log10(4*pi/Wavelength));
+Pr0=PTxdBw + TXAntennaGain + RXAntennaGain- (10*PathLossExponent*log10(4*pi/Wavelength));
 rstate = randn('state');
 randn('state', d(i));
 GaussRandom= (randn*0.1+0);
