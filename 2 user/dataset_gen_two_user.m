@@ -171,5 +171,3 @@ for i=1:150000
     end
 end
 writeNPY(l,['2user-' main '-' part 'm_labels_150k_1.npy']);
-
-
