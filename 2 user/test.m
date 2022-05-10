@@ -10,8 +10,12 @@ clc;
 % Pr1: -77.6123 at distance:700 meters
 % Pr1: -78.2344 at distance:750 meters
 % loss_arr=[-30.4700877872899,-44.8189408627481,-45.5570879836464,-46.1371328886116,-47.1048365575309,-47.6122802822269,-48.2343944786525];
-distance_arr=string([100 500 550 600 650 700 750]);
-loss_arr=[-60.4700877872899,-74.8189408627481,-75.5570879836464,-76.1371328886116,-77.1048365575309,-77.6122802822269,-78.2343944786525];
+% distance_arr=string([100 500 600 700]);
+% loss_arr=[-60.4700877872899,-74.8189408627481,-76.1371328886116,-77.6122802822269];
+distance_arr=string([100 600]);
+loss_arr=[-60.4700877872899,-76.1371328886116];
+
+
 for outerloop=2:length(loss_arr)           
             fs=900e6;
             fD_eva=80;
@@ -62,20 +66,20 @@ for outerloop=2:length(loss_arr)
             A=alpha(i1,:);
             disp(A)
             %  
-            tx1=zeros(150000,1024);
-            labels=zeros(150000,5);
+            tx1=zeros(50000,1024);
+            labels=zeros(50000,5);
             mod_comb=[3 4;4 1;3 2;4 2;1 2];
-            a1=zeros(150000,1);
+            a1=zeros(50000,1);
             a2=zeros(5,1);
             count1=0;
             done=0;
             h=1;
 
-            for i=1:150000
-            a1(i)=fix((i-1)/30000)+1;
+            for i=1:50000
+            a1(i)=fix((i-1)/10000)+1;
             end
-            for i=1:150000
-                if(rem(i,30000)==0)
+            for i=1:50000
+                if(rem(i,10000)==0)
                     disp("label_gen "+i)
                 end
             labels(i,a1(i))=1;
@@ -85,7 +89,7 @@ for outerloop=2:length(loss_arr)
                         'PathDelays',0,...
                         'AveragePathGains',loss(2),...
                         'PathGainsOutputPort',true);
-            for i=1:150000
+            for i=1:50000
                 if(rem(i,25)==0)
                     disp(i)
                 end
@@ -109,14 +113,14 @@ for outerloop=2:length(loss_arr)
                 
                 tx=rayChan_data(tx_raw);
 
-                tx1(i,:)=awgn(tx,40)';
+                tx1(i,:)=awgn(tx,20)';
             
             
             end
 
-            real1=zeros(150000,1024);
-            imag1=zeros(150000,1024);
-            for i =1:150000
+            real1=zeros(50000,1024);
+            imag1=zeros(50000,1024);
+            for i =1:50000
                 real1(i,:) = real(tx1(i,:));
                 imag1(i,:) = imag(tx1(i,:));
                 if(rem(i,25)==0)
@@ -127,15 +131,15 @@ for outerloop=2:length(loss_arr)
 
             writeNPY(real1, 'noma_order_real_vh.npy');
             writeNPY(imag1, 'noma_order_imag_vh.npy');
-            disp(strjoin(['2user-' main '-' part 'm_150k_1024_2.npy'],""))
-            writeNPY(labels,strjoin(['2user-' main '-' part 'm_labels_150K_5.npy'],""));
+            disp(strjoin(['2user-' main '-' part 'm_50_1024_2_awgn_20.npy'],""))
+            writeNPY(labels,strjoin(['2user-' main '-' part 'm_labels_50_5_awgn_20.npy'],""));
             clearvars -except distance_arr loss_arr main part outerloop;
           
             real=readNPY('noma_order_real_vh.npy');
             imag=readNPY('noma_order_imag_vh.npy');
-            dataset=zeros(150000,1024,2);
+            dataset=zeros(50000,1024,2);
 
-            for i=1:150000
+            for i=1:50000
             if(rem(i,1000)==0)
                 disp(i);
             end
@@ -144,16 +148,16 @@ for outerloop=2:length(loss_arr)
                     dataset(i,j,2)=imag(i,j);
             end
             end
-            disp('2user-'+main+'-'+part+'m_150k_1024_2.npy')
-            writeNPY(dataset,strjoin(['2user-' main '-' part 'm_150k_1024_2.npy'],""));
+            disp('2user-'+main+'-'+part+'m_50_1024_2_awgn_20.npy')
+            writeNPY(dataset,strjoin(['2user-' main '-' part 'm_50_1024_2_awgn_20.npy'],""));
 
             % clear all;
             % main='100&500w_shuffle';
             % part='100';
             % disp("creating second dataset");
-            % data1=readNPY(['2user-' main '-' part 'm_150k_1024_2.npy']);
-            % dataset=zeros(150000,2,1024);
-            % for i=1:150000
+            % data1=readNPY(['2user-' main '-' part 'm_50_1024_2.npy']);
+            % dataset=zeros(50000,2,1024);
+            % for i=1:50000
             %    if(rem(i,1000)==0)
             %     disp(i);
             %    end
@@ -162,19 +166,19 @@ for outerloop=2:length(loss_arr)
             %           dataset(i,2,j)=data1(i,j,2);
             %    end
             % end
-            % writeNPY(dataset,['2user-' main '-' part 'm_150k_2_1024.npy']);
+            % writeNPY(dataset,['2user-' main '-' part 'm_50_2_1024.npy']);
             clearvars -except distance_arr loss_arr main part outerloop;
             disp("labels creation");
-            disp(['2user-',main '-' part 'm_labels_150K_5.npy'])
-            label=readNPY(strjoin(['2user-' main '-' part 'm_labels_150K_5.npy'],""));
-            l=zeros(150000,1);
-            for i=1:150000
+            disp(['2user-',main '-' part 'm_labels_50_5_awgn_20.npy'])
+            label=readNPY(strjoin(['2user-' main '-' part 'm_labels_50_5_awgn_20.npy'],""));
+            l=zeros(50000,1);
+            for i=1:50000
                 for j=1:5
                     if(label(i,j)==1)
                         l(i)=j-1;
                     end
                 end
             end
-            writeNPY(l,strjoin(['2user-' main '-' part 'm_labels_150k_1.npy'],""));
+            writeNPY(l,strjoin(['2user-' main '-' part 'm_labels_50k_1_awgn_20.npy'],""));
 
-        end
+end
