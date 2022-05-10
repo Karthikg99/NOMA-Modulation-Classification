@@ -32,7 +32,7 @@ disp(count)
 %           
 % %             disp(b(count,:));
 %             count=count+1;
-%         end
+%         end 
 %     end
 %     
 % end
