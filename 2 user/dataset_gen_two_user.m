@@ -3,8 +3,8 @@ clc;
 % rng(12345);
 fs=900e6;
 fD_eva=80;
-pathdelay_eva=[0 30 150 310 370 710 1090 1730 2510]*1e-9;
-avgpathgain_eva=[0.0 -1.5 -1.4 -3.6 -0.6 -9.1 -7.0 -12.0 -16.9];
+%pathdelay_eva=[0 30 150 310 370 710 1090 1730 2510]*1e-9;
+%avgpathgain_eva=[0.0 -1.5 -1.4 -3.6 -0.6 -9.1 -7.0 -12.0 -16.9];
 % Pr1: -60.4701 at distance:100 meters
 % Pr1: -74.8189 at distance:500 meters
 % Pr1: -75.5571 at distance:550 meters
@@ -104,7 +104,7 @@ for i=1:150000
     
     tx=rayChan_data(tx_raw);
 
-    tx1(i,:)=awgn(tx,40)';
+    tx1(i,:)=awgn(tx,40,'measured')';
    
    
 end
