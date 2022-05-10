@@ -113,7 +113,7 @@ for outerloop=2:length(loss_arr)
                 
                 tx=rayChan_data(tx_raw);
 
-                tx1(i,:)=awgn(tx,20)';
+                tx1(i,:)=awgn(tx,20,'measured')';
             
             
             end
